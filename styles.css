@@ -1,0 +1,54 @@
+
+header, body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: honeydew;
+}
+
+
+.container {
+    width: 300px;
+    height: 470px;
+    background-color: lightskyblue;
+    border-radius: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.display {
+    width: 90%;
+    height: 15%;
+    background-color: lightgrey;
+    border-radius: 10px;
+    padding: 0 6px;
+    margin: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 36px;
+}
+
+.settings {
+    width: 22%;
+    height: 13%;
+    margin: 3px;
+    font-size: large;
+}
+
+.numbers {
+    width: 22%;
+    height: 13%;
+    margin: 10px 3px;
+    font-size: large;
+}
+
+.operation {
+    width: 22%;
+    height: 13%;
+    margin: 10px 3px;
+    font-size: large;
+}
+
