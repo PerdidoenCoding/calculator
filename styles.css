@@ -9,46 +9,58 @@ header, body {
 
 
 .container {
-    width: 300px;
-    height: 470px;
+    width: 400px;
+    border: 2px black solid;
+    border-radius: 15px;
+    padding: 20px;
     background-color: lightskyblue;
-    border-radius: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
 }
+
 
 .display {
     width: 90%;
-    height: 15%;
+    min-height: 15%;
     background-color: lightgrey;
     border-radius: 10px;
     padding: 0 6px;
     margin: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
     font-size: 36px;
+    text-align: right;
+    word-wrap: break-word;
+    word-break: break-all;
 }
 
-.settings {
-    width: 22%;
-    height: 13%;
-    margin: 3px;
-    font-size: large;
-}
+.screen-last {
+    min-height: 32px;
+    font-size: 20px;
+  }
+  
+  .screen-current {
+    min-height: 64px;
+    font-size: 40px;
+  }
 
-.numbers {
-    width: 22%;
-    height: 13%;
-    margin: 10px 3px;
-    font-size: large;
-}
+.buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 10px;
+  }
 
+#decimal,
+.settings,
+.numbers,
 .operation {
-    width: 22%;
-    height: 13%;
-    margin: 10px 3px;
-    font-size: large;
+    padding: 20px;
+    border: 2px var(--border) solid;
+    border-radius: 5px;
+    font-size: 20px;
+}
+
+button {
+    box-shadow: 2px;
+}
+
+button:hover {
+    background-color: aliceblue;
 }
 
