@@ -1,119 +1,132 @@
-const percent = document.getElementById("percent");
-const divide = document.getElementById("divide");
-const multiply = document.getElementById("multiply");
-const minus = document.getElementById("minus");
-const plus = document.getElementById("plus");
-const numberBttns = document.querySelectorAll(".numbers");
+const operatorBttns = document.querySelectorAll('[data-operator]')
+const numberBttns = document.querySelectorAll('[data-number]')
 const acBttn = document.getElementById("ac");
 const cBttn = document.getElementById("c");
 const on = document.getElementById("on");
 const equals = document.getElementById("equals")
+const decimal = document.getElementById("decimal");
+const lastOperationScreen = document.getElementById('lastOperationScreen')
+const currentOperationScreen = document.getElementById('currentOperationScreen')
 
-let display = document.querySelector(".display");
 let isOn = true;
 let currentNumber = '';
 let nextNumber = '';
-let operation = null;
+let currentOperation = null;
+let shouldResetScreen = false;
 
 acBttn.addEventListener('click', () => {
-    display.textContent = '0';
-    currentNumber = '';
-    nextNumber = '';
-
+  currentOperationScreen.textContent = '0'
+  lastOperationScreen.textContent = ''
+  firstOperand = ''
+  secondOperand = ''
+  currentOperation = null
 });
 
 cBttn.addEventListener('click', () => {
-    display.textContent = display.textContent.slice(0, -1);
-    if (display.textContent === '') {
-        display.textContent = '0';
+    currentOperationScreen.textContent = currentOperationScreen.textContent.slice(0, -1);
+    if (currentOperationScreen.textContent === '') {
+        currentOperationScreen.textContent = '0';
     }
-    currentNumber =  display.textContent
+    currentNumber =  currentOperationScreen.textContent;
 })
 
 percent.addEventListener('click', () => {
-    if (display.textContent !== '0') {
-        display.textContent = Number((display.textContent / 100).toFixed(14));
-        display.textContent = result < 5e-15 ? '0' : result;
+    if (currentOperationScreen.textContent !== '0') {
+        let result = Number((currentOperationScreen.textContent / 100).toFixed(14));
+        currentOperationScreen.textContent = result < 5e-15 ? '0' : result;
     }
 })
 
 on.addEventListener('click', () => {
     if (isOn) {
-        display.textContent = '';
+        currentOperationScreen.textContent = '';
         isOn = false;
     } else {
-        display.textContent = '0';
+        currentOperationScreen.textContent = '0';
         currentNumber = '';
         nextNumber = '';
         isOn = true;
     }
 })
 
+numberBttns.forEach((button) =>
+  button.addEventListener('click', () => appendNumber(button.textContent))
+)
 
-numberBttns.forEach(button => {
-    button.addEventListener('click', () => {
-        if (display.textContent.length < 15) {
-            if (display.textContent === '0') {
-                display.textContent = button.textContent;
-            } else {
-                display.textContent += button.textContent;
-            }
-        }
-        if (!operation) {
-            currentNumber += button.textContent;
-            display.textContent = currentNumber;
-        } else {
-            nextNumber += button.textContent;
-            display.textContent = nextNumber;
-        }
-    });
-});
+operatorBttns.forEach((button) =>
+  button.addEventListener('click', () => setOperation(button.textContent))
+)
 
-divide.addEventListener('click', () => {
-    operation = '/';
-});
+function appendNumber(number) {
+    if (currentOperationScreen.textContent === '0' || shouldResetScreen)
+    resetScreen()
 
-multiply.addEventListener('click', () => {
-    operation = '*';
-});
-
-minus.addEventListener('click', () => {
-    operation = '-';
-});
-
-plus.addEventListener('click', () => {
-    operation = '+';
-})
-
-
-equals.addEventListener('click', () => {
-    let result;
-    if (operation === '/') {
-        result = Number(currentNumber) / Number(nextNumber);
-    } else if (operation === '*') {
-        result = Number(currentNumber) * Number(nextNumber);
-    } else if (operation === '-') {
-        result = Number(currentNumber) - Number(nextNumber);
-    } else if (operation === '+') {
-        result = Number(currentNumber) + Number(nextNumber);
+    if(currentOperationScreen.textContent === '0') {
+        currentOperationScreen.textContent = number;
+    } else {
+        currentOperationScreen.textContent += number;
     }
-    
-    let resultString = result.toString();
+    currentNumber = currentOperationScreen.textContent;
+}
 
-    if (resultString.length > 15) {
-        resultString = result.toFixed(10);
-        resultString = parseFloat(resultString).toString();
+function resetScreen() {
+    currentOperationScreen.textContent = ''
+    shouldResetScreen = false
+  }
+
+decimal.addEventListener('click', () => {
+    if(!currentOperationScreen.textContent.includes('.')) {
+        currentOperationScreen.textContent += '.';
+        currentNumber = currentOperationScreen.textContent;
+    } else if(currentOperation !== null && !currentOperationScreen.textContent.includes('.')) {
+        nextNumber = currentOperationScreen.textContent;
     }
 
-    display.textContent = result;
-
-    currentNumber = display.textContent;
-    nextNumber = '';
-    operation = null;
 });
 
+function setOperation(operator) {
+  if (currentOperation !== null) evaluate()
+  firstOperand = currentOperationScreen.textContent
+  currentOperation = operator
+  lastOperationScreen.textContent = `${firstOperand} ${currentOperation}`
+  shouldResetScreen = true
+}
 
 
+  function operate(operator, a, b) {
+    a = Number(a)
+    b = Number(b)
+    switch (operator) {
+      case '+':
+        return a + b
+      case '-':
+        return a - b
+      case 'x':
+        return a * b
+      case '/':
+        if (b === 0) return null
+        else return a / b
+      default:
+        return null
+    }
+  }
 
+  equals.addEventListener('click', evaluate)
 
+  function evaluate() {
+    if (currentOperation === null || shouldResetScreen) return
+    if (currentOperation === '/' && currentOperationScreen.textContent === '0') {
+      alert("You can't divide by 0!")
+      return
+    }
+    secondOperand = currentOperationScreen.textContent
+    currentOperationScreen.textContent = roundResult(
+      operate(currentOperation, firstOperand, secondOperand)
+    )
+    lastOperationScreen.textContent = `${firstOperand} ${currentOperation} ${secondOperand} =`
+    currentOperation = null
+  }
 
+  function roundResult(number) {
+    return Math.round(number * 1000) / 1000
+  }
